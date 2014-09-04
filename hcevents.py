@@ -28,7 +28,6 @@ for event_element in tree.xpath('//ol[@class="ai1ec-date-events"]'):
 
     if not title:
         title = description_text.split('\n')[0]
-    print(title)
 
     # Events end next day at 4 in the morning.
     endtime = (time + datetime.timedelta(days=1)).replace(hour=4, minute=0, second=0)
