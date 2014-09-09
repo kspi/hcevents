@@ -1,0 +1,5 @@
+icalendar
+PyRSS2Gen
+requests
+lxml
+python-dateutil
