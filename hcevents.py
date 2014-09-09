@@ -106,4 +106,4 @@ def output_rss(filename, events):
 if __name__ == "__main__":
     events = get_events()
     output_calendar("hcevents.ics", events)
-    output_rss("hcevents.rss", events)
+    output_rss("hcevents.xml", events)
