@@ -27,7 +27,7 @@ def get_events():
         link = event_element.xpath('li[@class="ai1ec-date"]/a')[0]
         title = link.text.strip()
         url = link.get('href')
-        time_str = event_element.xpath('li[@class="ai1ec-date"]/p/span[@class="ai1ec-event-time"]/text()')[0].strip()
+        time_str = event_element.xpath('descendant-or-self::span[@class="ai1ec-event-time"]/text()')[0].strip()
         time = parse(time_str).replace(tzinfo=tzlocal())
 
         description_elements = event_element.xpath('li[@class="ai1ec-date"]/following-sibling::*')
