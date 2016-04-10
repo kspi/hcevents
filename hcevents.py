@@ -55,13 +55,12 @@ def output_calendar(filename, events):
     cal.add('version', '2.0')
     cal.add('prodid', '-//hcevents//wemakethings.net//')
     for event in events:
-        # Events end next day at 4 in the morning.
-        endtime = (event.time + datetime.timedelta(days=1)).replace(hour=4, minute=0, second=0)
+        endtime = event.time.replace(hour=23, minute=59, second=59)
         cal_event = icalendar.Event()
         cal_event.add('uid', event.url)
-        cal_event.add('dtstart', event.time.astimezone(tzutc()))
-        cal_event.add('dtend', endtime.astimezone(tzutc()))
-        cal_event.add('dtstamp', datetime.datetime.now(tzutc()))
+        cal_event.add('dtstart', event.time.astimezone(tzlocal()))
+        cal_event.add('dtend', endtime.astimezone(tzlocal()))
+        cal_event.add('dtstamp', datetime.datetime.now(tzlocal()))
         cal_event.add('summary', event.title)
         cal_event.add('description', event.description_text)
         cal_event.add('x-alt-desc', event.description_html, parameters={'fmttype': 'text/html'})
