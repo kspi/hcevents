@@ -7,7 +7,7 @@ import requests
 import collections
 import icalendar
 import PyRSS2Gen as RSS2
-import pickle
+import shelve
 
 
 Event = collections.namedtuple("Event", [
@@ -71,31 +71,25 @@ def output_calendar(filename, events):
 
 def output_rss(filename, events):
     items = []
-    try:
-        with open('pubdates.pickle', 'rb') as f:
-            pubdates = pickle.load(f)
-    except (FileNotFoundError, EOFError):
-        pubdates = {}
-    updated_pubdates = {}
-    for event in events:
-        if event in pubdates:
-            pubdate = pubdates[event]
-        else:
-            pubdate = datetime.datetime.now(tzlocal())
-        updated_pubdates[event] = pubdate
-        items.append(RSS2.RSSItem(
-            title="{:%Y-%m-%d} {}".format(event.time, event.title),
-            link=event.url,
-            guid=RSS2.Guid(event.url),
-            pubDate=pubdate,
-            description="{:%Y-%m-%d %H:%M}\n{}".format(event.time, event.description_html)
-        ))
-    with open('pubdates.pickle', 'wb') as f:
-        pickle.dump(updated_pubdates, f)
+    with shelve.open('db', writeback=True) as db:
+        pubdates = db.setdefault('pubdates', {})
+        for event in events:
+            if event in pubdates:
+                pubdate = pubdates[event]
+            else:
+                pubdate = datetime.datetime.now(tzlocal())
+            pubdates[event] = pubdate
+            items.append(RSS2.RSSItem(
+                title="{:%Y-%m-%d} {}".format(event.time, event.title),
+                link=event.url,
+                guid=RSS2.Guid(event.url),
+                pubDate=pubdate,
+                description="{:%Y-%m-%d %H:%M}\n{}".format(event.time, event.description_html)
+            ))
     rss = RSS2.RSS2(
         title="Vilnius Hardcore events",
         link="http://wemakethings.net/hcevents/",
-        lastBuildDate=max(updated_pubdates.values()),
+        lastBuildDate=max(pubdates.values()),
         description='',
         items=items
     )
