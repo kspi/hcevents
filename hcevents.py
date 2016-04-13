@@ -84,23 +84,23 @@ def output_rss(filename, events):
             pubdate = datetime.datetime.now(tzlocal())
         updated_pubdates[event] = pubdate
         items.append(RSS2.RSSItem(
-            title = "{:%Y-%m-%d} {}".format(event.time, event.title),
-            link = event.url,
-            guid = RSS2.Guid(event.url),
-            pubDate = pubdate,
-            description = "{:%Y-%m-%d %H:%M}\n{}".format(event.time, event.description_html)
+            title="{:%Y-%m-%d} {}".format(event.time, event.title),
+            link=event.url,
+            guid=RSS2.Guid(event.url),
+            pubDate=pubdate,
+            description="{:%Y-%m-%d %H:%M}\n{}".format(event.time, event.description_html)
         ))
     with open('pubdates.pickle', 'wb') as f:
         pickle.dump(updated_pubdates, f)
     rss = RSS2.RSS2(
-        title = "Vilnius Hardcore events",
-        link = "http://wemakethings.net/hcevents/",
-        lastBuildDate = max(updated_pubdates.values()),
-        description = '',
-        items = items
+        title="Vilnius Hardcore events",
+        link="http://wemakethings.net/hcevents/",
+        lastBuildDate=max(updated_pubdates.values()),
+        description='',
+        items=items
     )
     with open(filename, 'wb') as f:
-        rss.write_xml(f)
+        rss.write_xml(f, encoding="utf-8")
 
 if __name__ == "__main__":
     events = get_events()
