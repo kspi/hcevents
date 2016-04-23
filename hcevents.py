@@ -24,10 +24,13 @@ def get_events():
     tree = html.fromstring(page)
     events = []
     for event_element in tree.xpath('//ol[@class="ai1ec-date-events"]'):
-        link = event_element.xpath('li[@class="ai1ec-date"]/a')[0]
-        title = link.text.strip()
-        url = link.get('href')
-        time_str = event_element.xpath('descendant-or-self::span[@class="ai1ec-event-time"]/text()')[0].strip()
+        try:
+            link = event_element.xpath('li[@class="ai1ec-date"]/a')[0]
+            title = link.text.strip()
+            url = link.get('href')
+            time_str = event_element.xpath('descendant-or-self::span[@class="ai1ec-event-time"]/text()')[0].strip()
+        except IndexError:
+            continue
         time = parse(time_str).replace(tzinfo=tzlocal())
 
         description_elements = event_element.xpath('li[@class="ai1ec-date"]/following-sibling::*')
